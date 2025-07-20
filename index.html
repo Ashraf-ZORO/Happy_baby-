@@ -8,42 +8,33 @@
     body {
       background-color: #fff0f6;
       font-family: 'Cairo', sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
       margin: 0;
-      text-align: center;
+      padding: 40px;
+    }
+
+    .typing-container {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      max-width: 600px;
     }
 
     .typing-text {
-      font-size: 40px;
+      font-size: 28px;
       color: #ff69b4;
+      line-height: 2;
+      direction: rtl;
+      white-space: pre-line;
       border-right: 3px solid #ff69b4;
-      white-space: nowrap;
       overflow: hidden;
-      width: 0;
-      animation: typing 4s steps(60, end), blink-caret .75s step-end infinite, erase 4s steps(60, end) 5s forwards;
-    }
-
-    @keyframes typing {
-      from { width: 0; }
-      to { width: 100%; }
-    }
-
-    @keyframes erase {
-      from { width: 100%; }
-      to { width: 0; }
-    }
-
-    @keyframes blink-caret {
-      from, to { border-color: transparent; }
-      50% { border-color: #ff69b4; }
     }
 
     .button-container {
-      margin-top: 60px;
+      position: absolute;
+      bottom: 60px;
+      right: 50%;
+      transform: translateX(50%);
+      text-align: center;
     }
 
     .heart-button {
@@ -55,6 +46,7 @@
       border-radius: 40px;
       cursor: pointer;
       transition: all 0.3s ease;
+      font-family: 'Cairo', sans-serif;
     }
 
     .heart-button:hover {
@@ -66,8 +58,8 @@
 </head>
 <body>
 
-  <div class="typing-text" id="typing-text">
-    كل سنه وصغنونتي حبيبة قلبي طيبه ودايما معايا وقريبه لقلبي…❤️
+  <div class="typing-container">
+    <div class="typing-text" id="typing-text"></div>
   </div>
 
   <div class="button-container">
@@ -75,12 +67,57 @@
   </div>
 
   <script>
-    setInterval(() => {
-      const text = document.getElementById("typing-text");
-      text.style.animation = "none";
-      void text.offsetWidth;
-      text.style.animation = "typing 4s steps(60, end), blink-caret .75s step-end infinite, erase 4s steps(60, end) 5s forwards";
-    }, 10000);
+    const lines = [
+      "كل سنه وصغنونتي حبيبة قلبي طيبه ودايما معايا",
+      "وقريبه لقلبي…❤️",
+      "ربنا يديكي طولة العمر ياروح قلبي ويخليكي لي",
+      "ونفضل دايما سوا لحد منبقي عواااجيز كحكوكحه😂",
+      "بس هتفضلي ف عيني صغنونتي حبيبة قلبي مهما كبرتي",
+      "بحبك كتييييييييييييير ❤️"
+    ];
+
+    const typingSpeed = 50;
+    const pauseBetweenLines = 500;
+    const eraseDelay = 2000;
+
+    const typingDiv = document.getElementById("typing-text");
+
+    let lineIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typedLines = [];
+
+    function typeLine() {
+      if (lineIndex < lines.length) {
+        let currentLine = lines[lineIndex];
+        if (charIndex <= currentLine.length) {
+          typingDiv.innerHTML = typedLines.join('\n') + '\n' + currentLine.substring(0, charIndex) + '|';
+          charIndex++;
+          setTimeout(typeLine, typingSpeed);
+        } else {
+          typedLines.push(currentLine);
+          lineIndex++;
+          charIndex = 0;
+          setTimeout(typeLine, pauseBetweenLines);
+        }
+      } else {
+        setTimeout(eraseAll, eraseDelay);
+      }
+    }
+
+    function eraseAll() {
+      if (typedLines.length > 0) {
+        typedLines.pop();
+        typingDiv.innerHTML = typedLines.join('\n') + '|';
+        setTimeout(eraseAll, 100);
+      } else {
+        lineIndex = 0;
+        charIndex = 0;
+        setTimeout(typeLine, 800);
+      }
+    }
+
+    typeLine();
 
     function goToGallery() {
       window.location.href = "gallery.html";
@@ -89,3 +126,5 @@
 
 </body>
 </html>
+
+  
